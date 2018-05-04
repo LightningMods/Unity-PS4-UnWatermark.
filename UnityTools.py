@@ -13,6 +13,9 @@ def zip(src, dst):
             arcname = absname[len(abs_src) + 1:]
             print('Writing %s To '+dst) % filename
             zf.write(absname, arcname)
+            if args.__contains__("-d"):
+                print("Remove %s") % filename
+                os.remove(absname)
     zf.close()
 
 print("SilicaAndPina's PSV Unity Tools:")
@@ -22,6 +25,7 @@ print("-f Fix Unsafe Homebrew Bug")
 print("-u Remove \"Trial Mode\" Watermark")
 print("-r Remove unused files")
 print("-p Pack to VPK")
+print("-d Remove input folder after packing to vpk.")
 print("\nExample: UnityTools -i input -o output -f -u -r -p")
 
 args = sys.argv[1:]
@@ -131,6 +135,13 @@ if args.__contains__("-p"):
         except:
             pass
         zip(inputFolder,outputFolder+"/"+selfFile+".vpk")
+        if args.__contains__("-d"):
+            try:
+                print("Removing "+inputFolder)
+                shutil.rmtree(inputFolder)
+            except:
+                pass
+
 
 
 
