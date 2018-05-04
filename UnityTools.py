@@ -30,6 +30,8 @@ print("\nExample: UnityTools -i input -o output -f -u -r -p -d")
 
 args = sys.argv[1:]
 
+if len(args) == 1 and os.path.exists(args[0]):
+    args = ["-i",args[0],"-f","-u","-p"]
 
 if args.__contains__("-i"):
     global inputFolder
@@ -42,8 +44,8 @@ if args.__contains__("-o"):
     global outputFolder
     outputFolder = args[args.index("-o") + 1]
 else:
-    print("No output folder! using "+inputFolder+"-output")
-    outputFolder = inputFolder+"-output"
+    print("No output folder! using "+inputFolder+"../out")
+    outputFolder = inputFolder+"../out"
 
 print("BEGIN PROCESSING")
 print("Looking for SELFs in "+inputFolder)
@@ -146,7 +148,6 @@ if args.__contains__("-p"):
                 shutil.rmtree(inputFolder)
             except:
                 pass
-
 
 
 
