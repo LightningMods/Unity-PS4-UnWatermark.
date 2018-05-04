@@ -14,7 +14,7 @@ def zip(src, dst):
             print('Writing %s To '+dst) % filename
             zf.write(absname, arcname)
             if args.__contains__("-d"):
-                print("Remove %s") % filename
+                print("Removing %s") % filename
                 os.remove(absname)
     zf.close()
 
@@ -22,11 +22,11 @@ print("SilicaAndPina's PSV Unity Tools:")
 print("-i Input Path")
 print("-o Output Path")
 print("-f Fix Unsafe Homebrew Bug")
-print("-u Remove \"Trial Mode\" Watermark")
+print("-u Remove \"Trial Version\" Watermark")
 print("-r Remove unused files")
 print("-p Pack to VPK")
 print("-d Remove input folder after packing to vpk.")
-print("\nExample: UnityTools -i input -o output -f -u -r -p")
+print("\nExample: UnityTools -i input -o output -f -u -r -p -d")
 
 args = sys.argv[1:]
 
@@ -81,11 +81,16 @@ if args.__contains__("-f"):
     print("Fixed!")
 
 if args.__contains__("-u"):
-    print("Removing \"Trial Mode\" Watermark. . .")
+    print("Removing \"Trial Version\" Watermark. . .")
     try:
-        readData = open(inputFolder+selfFile,"rb").read()
-        readData = readData.replace(b"\x55\x6E\x69\x74\x79\x57\x61\x74\x65\x72\x4D\x61\x72\x6B\x2D\x74\x72\x69\x61\x6C\x2E\x70\x6E\x67",b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00")
-        open(inputFolder+selfFile,"wb").write(readData)
+        with open(inputFolder+selfFile,"rb") as file:
+            readData = file.read()
+            offset = readData.index(b"\x74\x72\x69\x61\x6C\x2E\x70\x6E\x67")
+            file.close()
+        if not readData.__contains__(b"girldying"):
+            with open(inputFolder+selfFile,"r+b") as file:
+                file.seek(offset)
+                file.write(b"girldying")
     except:
         print("Failed to open SELF: "+selfFile)
         sys.exit(344)
