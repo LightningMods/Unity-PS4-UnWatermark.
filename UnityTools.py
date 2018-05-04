@@ -31,7 +31,7 @@ print("\nExample: UnityTools -i input -o output -f -u -r -p -d")
 args = sys.argv[1:]
 
 if len(args) == 1 and os.path.exists(args[0]):
-    args = ["-i",args[0],"-f","-u","-r","-p","-d"]
+    args = ["-i",args[0],"-o",args[0],"-f","-u","-r","-p","-d"]
 
 if args.__contains__("-i"):
     global inputFolder
