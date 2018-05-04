@@ -73,7 +73,7 @@ if args.__contains__("-f"):
     try:
         with open(inputFolder+selfFile,"r+b") as file:
             file.seek(0x80)
-            file.write(b"\x00\x00\x00\x00\x00\x00\x00\x00")
+            file.write(b"\x00")
             file.close()
     except:
         print("Failed to open SELF: "+selfFile)
