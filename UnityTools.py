@@ -11,10 +11,10 @@ def zip(src, dst):
         for filename in files:
             absname = os.path.abspath(os.path.join(dirname, filename))
             arcname = absname[len(abs_src) + 1:]
-            print('Writing %s To '+dst) % filename
+            print('Writing '+filename+' To '+dst)
             zf.write(absname, arcname)
             if args.__contains__("-d"):
-                print("Removing %s") % filename
+                print("Removing "+filename)
                 os.remove(absname)
     zf.close()
 
@@ -45,26 +45,25 @@ if args.__contains__("-o"):
     outputFolder = args[args.index("-o") + 1]
 else:
     print("No output folder! using "+inputFolder+"../out")
-    outputFolder = inputFolder+"../out"
+    outputFolder = inputFolder+"-out"
 
 print("BEGIN PROCESSING")
 print("Looking for SELFs in "+inputFolder)
 
 
 a = 0
+
+list = os.listdir(inputFolder)
+while a != len(list):
+    if list[a].lower().endswith(".self") or list[a].lower() == "eboot.bin":
+        print("SELF Found: "+list[a])
+        global selfFile
+        selfFile = list[a]
+        a = len(list)
+        break
+        file.close()
+    a += 1
 try:
-    list = os.listdir(inputFolder)
-    while a != len(list):
-        if list[a].lower().endswith(".self") or list[a].lower().endswith(".bin"):
-            with open(inputFolder+list[a],"rb") as file:
-                if file.read(3) == "SCE":
-                    print("SELF Found: "+list[a])
-                    global selfFile
-                    selfFile = list[a]
-                    a = len(list)
-                    break
-                file.close()
-        a += 1
     selfFile
 except:
     print("No SELF found! (Incorrect input dir?)")
@@ -73,7 +72,7 @@ except:
 if args.__contains__("-f"):
     print("Fixing Unsafe Homebrew bug. . .")
     try:
-        with open(inputFolder+selfFile,"r+b") as file:
+        with open(inputFolder+"\\"+selfFile,"r+b") as file:
             file.seek(0x80)
             file.write(b"\x00")
             file.close()
@@ -85,12 +84,12 @@ if args.__contains__("-f"):
 if args.__contains__("-u"):
     print("Removing \"Trial Version\" Watermark. . .")
     try:
-        with open(inputFolder+selfFile,"rb") as file:
+        with open(inputFolder+"\\"+selfFile,"rb") as file:
             readData = file.read()
             offset = readData.index(b"\x74\x72\x69\x61\x6C\x2E\x70\x6E\x67")
             file.close()
         if not readData.__contains__(b"girldying"):
-            with open(inputFolder+selfFile,"r+b") as file:
+            with open(inputFolder+"\\"+selfFile,"r+b") as file:
                 file.seek(offset)
                 file.write(b"girldying")
     except:
@@ -102,19 +101,19 @@ if args.__contains__("-r"):
     print("Removing unused files. . .")
     print("Removing SymbolFiles/")
     try:
-        shutil.rmtree(inputFolder+"SymbolFiles")
+        shutil.rmtree(inputFolder+"\\SymbolFiles")
     except:
         pass
 
     print("Removing Configuration.psp2path")
     try:
-        os.remove(inputFolder+"configuration.psp2path")
+        os.remove(inputFolder+"\\configuration.psp2path")
     except:
         pass
 
     print("Removing ScriptLayoutHashes.txt")
     try:
-        os.remove(inputFolder+"ScriptLayoutHashes.txt")
+        os.remove(inputFolder+"\\ScriptLayoutHashes.txt")
     except:
         pass
 
@@ -126,7 +125,7 @@ if args.__contains__("-r"):
         while a != len(list):
             if list[a].lower().endswith("bat"):
                 print("Removing "+list[a])
-                os.remove(inputFolder+list[a])
+                os.remove(inputFolder+"\\"+list[a])
             a += 1
     except:
         pass
@@ -135,13 +134,13 @@ if args.__contains__("-r"):
 if args.__contains__("-p"):
         print("Packing to .VPK. . .")
         print("Renaming " +selfFile+" To eboot.bin")
-        os.rename(inputFolder+selfFile,inputFolder+"eboot.bin")
+        os.rename(inputFolder+"\\"+selfFile,inputFolder+"\\eboot.bin")
         print("Zipping "+inputFolder)
         try:
             os.makedirs(outputFolder)
         except:
             pass
-        zip(inputFolder,outputFolder+"/"+selfFile+".vpk")
+        zip(inputFolder,outputFolder+"\\"+selfFile+".vpk")
         if args.__contains__("-d"):
             try:
                 print("Removing "+inputFolder)
