@@ -31,7 +31,7 @@ print("\nExample: UnityTools -i input -o output -f -u -r -p -d")
 args = sys.argv[1:]
 
 if len(args) == 1 and os.path.exists(args[0]):
-    args = ["-i",args[0],"-f","-u","-p"]
+    args = ["-i",args[0],"-f","-u","-r","-p","-d"]
 
 if args.__contains__("-i"):
     global inputFolder
@@ -140,7 +140,7 @@ if args.__contains__("-p"):
             os.makedirs(outputFolder)
         except:
             pass
-        zip(inputFolder,outputFolder+"\\"+selfFile+".vpk")
+        zip(inputFolder,outputFolder+".vpk")
         if args.__contains__("-d"):
             try:
                 print("Removing "+inputFolder)
