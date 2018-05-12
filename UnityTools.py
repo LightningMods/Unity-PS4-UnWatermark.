@@ -2,6 +2,19 @@ import shutil
 import sys
 import os
 import zipfile
+import datetime
+
+
+print("SilicaAndPina's PSV Unity Tools:")
+print("-i Input Path")
+print("-o Output Path")
+print("-f Fix Unsafe Homebrew Bug")
+print("-u Remove \"Trial Version\" Watermark")
+print("-r Remove unused files")
+print("-p Pack to VPK")
+print("-d Remove input folder after packing to vpk.")
+print("-bt Add build time to output folder")
+print("\nExample: UnityTools -i input -o output -f -u -r -p -d -bt")
 
 
 def zip(src, dst):
@@ -18,20 +31,13 @@ def zip(src, dst):
                 os.remove(absname)
     zf.close()
 
-print("SilicaAndPina's PSV Unity Tools:")
-print("-i Input Path")
-print("-o Output Path")
-print("-f Fix Unsafe Homebrew Bug")
-print("-u Remove \"Trial Version\" Watermark")
-print("-r Remove unused files")
-print("-p Pack to VPK")
-print("-d Remove input folder after packing to vpk.")
-print("\nExample: UnityTools -i input -o output -f -u -r -p -d")
-
 args = sys.argv[1:]
 
 if len(args) == 1 and os.path.exists(args[0]):
-    args = ["-i",args[0],"-o",args[0],"-f","-u","-r","-p","-d"]
+    if os.path.exists("default.txt"):
+        args = open("default.txt","r").read().replace("<path>",args[0]).split()
+    else:
+        args = ["-i",args[0],"-o",args[0],"-f","-u","-r","-p","-d","-bt"]
 
 if args.__contains__("-i"):
     global inputFolder
@@ -61,7 +67,6 @@ while a != len(list):
         selfFile = list[a]
         a = len(list)
         break
-        file.close()
     a += 1
 try:
     selfFile
@@ -140,7 +145,13 @@ if args.__contains__("-p"):
             os.makedirs(outputFolder)
         except:
             pass
-        zip(inputFolder,outputFolder+".vpk")
+
+        if args.__contains__("-bt"):
+            outputFolder += str(datetime.datetime.utcnow().replace(microsecond=0))
+            if outputFolder.endswith(".vpk"):
+                outputFolder += ".vpk"
+
+        zip(inputFolder,outputFolder)
         if args.__contains__("-d"):
             try:
                 print("Removing "+inputFolder)
